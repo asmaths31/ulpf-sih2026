@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-canvas: #E8F1F8;
+  --bg-shell: rgba(255, 255, 255, 0.55);
+  --glass: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --primary: #3F5B8C;
+  --primary-deep: #1F2A4D;
+  --text-muted: #6B7A90;
+  --success: #3BB273;
+  --success-bg: #DFF5E8;
+  --danger: #E5484D;
+  --danger-bg: #FBE3E3;
+  --warning: #E9A23B;
+  --warning-bg: #FCEFD8;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--primary-deep);
+  /* Pale sky-blue with soft blurred cloud blobs (simulated via radial gradients) */
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(255,255,255,0.4) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(255,255,255,0.4) 0%, transparent 50%);
+  background-attachment: fixed;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base tabular nums for metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULPF Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-yellow': '#E6FF55',
+                        'dark-sidebar': '#1A1C1E',
+                        'bg-canvas': '#8B9A93', // Match the outer greenish-grey bg
+                    },
+                    borderRadius: {
+                        '4xl': '2rem',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { background-color: #8B9A93; transition: background-color 0.3s ease; }
+        .dark body { background-color: #0F1113; }
+        .progress-dot { width: 1.5rem; height: 2.5rem; border-radius: 9999px; }
+    </style>
+</head>
+<body class="min-h-screen p-8 flex items-center justify-center transition-colors duration-300">
+
+    <!-- Main Container -->
+    <div class="bg-white dark:bg-[#1A1C1E] w-full max-w-[1400px] h-[85vh] rounded-[2.5rem] shadow-2xl flex p-3 gap-6 overflow-hidden transition-colors duration-300 border dark:border-gray-800">
+        
+        <!-- Dark Sidebar -->
+        <aside class="w-[80px] bg-[#161819] rounded-[2rem] flex flex-col items-center py-6 shrink-0 h-full">
+            <div class="w-10 h-10 rounded-full border border-gray-600 flex items-center justify-center text-white mb-8">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+            </div>
+            <nav class="flex flex-col gap-8 text-gray-500 w-full items-center">
+                <button class="hover:text-white transition"><i data-lucide="home" class="w-5 h-5"></i></button>
+                <button class="hover:text-white transition"><i data-lucide="share-2" class="w-5 h-5"></i></button>
+                <button class="bg-[#2C2E30] text-white p-3 rounded-2xl transition"><i data-lucide="box" class="w-5 h-5"></i></button>
+                <button class="hover:text-white transition"><i data-lucide="link" class="w-5 h-5"></i></button>
+                <button class="hover:text-white transition"><i data-lucide="globe" class="w-5 h-5"></i></button>
+                <button class="hover:text-white transition"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+            </nav>
+            <div class="mt-auto pb-2 flex flex-col gap-6 text-gray-400 items-center">
+                 <button class="hover:text-white transition"><i data-lucide="book-open" class="w-5 h-5"></i></button>
+                 <button class="hover:text-white transition"><i data-lucide="rocket" class="w-5 h-5"></i></button>
+                 <button class="hover:text-white transition"><i data-lucide="help-circle" class="w-5 h-5"></i></button>
+                 <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="w-10 h-10 rounded-full" />
+            </div>
+        </aside>
+
+        <!-- Main Content Column -->
+        <main class="flex-1 flex flex-col pt-6 overflow-y-auto pr-2">
+            <!-- Header -->
+            <header class="flex justify-between items-start mb-8">
+                <h1 class="text-[3.2rem] font-medium leading-[1.1] tracking-tight text-gray-900 dark:text-white transition-colors duration-300">
+                    Universal <span class="inline-flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 rounded-full align-middle border"><i data-lucide="shield" class="w-6 h-6"></i></span> Log
+                    <br>Pre-processing <span class="inline-flex items-center justify-center w-12 h-12 bg-brand-yellow rounded-full align-middle text-gray-900"><i data-lucide="zap" class="w-6 h-6"></i></span> Framework
+                </h1>
+                <div class="flex gap-3">
+                    <button id="themeToggle" class="w-12 h-12 flex items-center justify-center bg-gray-50 dark:bg-gray-800 dark:text-white rounded-full border dark:border-gray-700 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                        <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+                    <button class="w-12 h-12 flex items-center justify-center bg-gray-50 dark:bg-gray-800 dark:text-white rounded-full border dark:border-gray-700 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition" onclick="alert('Settings')">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </button>
+                    <button id="simBtn" class="px-6 py-3 bg-[#161819] dark:bg-white dark:text-gray-900 text-white rounded-full font-medium hover:bg-black dark:hover:bg-gray-200 transition flex items-center gap-2" onclick="startSimulation()">
+                        <i data-lucide="play" class="w-4 h-4"></i> Start Live Ingestion
+                    </button>
+                </div>
+            </header>
+
+            <!-- Pills -->
+            <div class="flex gap-2 mb-8 overflow-x-auto pb-2">
+                <button class="px-5 py-2.5 bg-[#161819] dark:bg-white dark:text-gray-900 text-white rounded-full text-sm font-medium">Dashboard</button>
+                <button class="px-5 py-2.5 bg-transparent text-gray-600 dark:text-gray-400 rounded-full text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition">Sources</button>
+                <button class="px-5 py-2.5 bg-transparent text-gray-600 dark:text-gray-400 rounded-full text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition">Schema Mapping</button>
+                <button class="px-5 py-2.5 bg-transparent text-gray-600 dark:text-gray-400 rounded-full text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition">Analytics</button>
+                <button class="px-5 py-2.5 bg-transparent text-gray-600 dark:text-gray-400 rounded-full text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition">Alerts</button>
+                <button class="px-5 py-2.5 bg-transparent text-gray-600 dark:text-gray-400 rounded-full text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition">Compliance</button>
+            </div>
+
+            <!-- 3 Cards Row -->
+            <div class="grid grid-cols-3 gap-5 mb-8">
+                <!-- Card 1 -->
+                <div class="bg-[#F8F9FA] dark:bg-gray-800 rounded-[2rem] p-6 relative border dark:border-gray-700 transition-colors">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <i data-lucide="activity" class="w-4 h-4"></i> Logs Ingested
+                        </div>
+                        <button><i data-lucide="more-vertical" class="w-4 h-4 text-gray-500"></i></button>
+                    </div>
+                    <div class="flex items-end gap-3 mb-6">
+                        <h2 class="text-5xl font-medium dark:text-white" id="totalLogs">0</h2>
+                        <span class="text-sm font-medium text-gray-500 mb-1">/ 10k <i data-lucide="loader" class="inline w-3 h-3 text-brand-yellow ml-1"></i></span>
+                    </div>
+                    <div class="flex gap-1.5">
+                        <div class="progress-dot bg-[#161819] dark:bg-gray-200"></div>
+                        <div class="progress-dot bg-[#161819] dark:bg-gray-200"></div>
+                        <div class="progress-dot bg-[#161819] dark:bg-gray-200"></div>
+                        <div class="progress-dot bg-[#161819] dark:bg-gray-200"></div>
+                        <div class="progress-dot bg-[#161819] dark:bg-gray-200"></div>
+                        <div class="progress-dot border border-dashed border-gray-300 dark:border-gray-600"></div>
+                        <div class="progress-dot border border-dashed border-gray-300 dark:border-gray-600"></div>
+                        <div class="progress-dot border border-dashed border-gray-300 dark:border-gray-600"></div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-brand-yellow rounded-[2rem] p-6 relative transition-colors">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
+                            <i data-lucide="arrow-right-left" class="w-4 h-4"></i> Anomalies Found
+                        </div>
+                        <button><i data-lucide="more-vertical" class="w-4 h-4 text-gray-700"></i></button>
+                    </div>
+                    <div class="flex items-end gap-3 mb-6">
+                        <h2 class="text-5xl font-medium text-gray-900" id="anomalyCount">0</h2>
+                        <span class="px-2 py-1 bg-white rounded-full text-xs font-bold border border-yellow-200 text-gray-900">2%</span>
+                    </div>
+                    <div class="flex gap-1.5">
+                        <div class="progress-dot bg-[#161819]"></div>
+                        <div class="progress-dot bg-[#161819]"></div>
+                        <div class="progress-dot bg-[#161819]"></div>
+                        <div class="progress-dot bg-[#161819]"></div>
+                        <div class="progress-dot border border-dashed border-yellow-600/30"></div>
+                        <div class="progress-dot border border-dashed border-yellow-600/30"></div>
+                        <div class="progress-dot border border-dashed border-yellow-600/30"></div>
+                        <div class="progress-dot border border-dashed border-yellow-600/30"></div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-[#161819] text-white rounded-[2rem] p-6 relative flex flex-col justify-between overflow-hidden">
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-medium mb-1 leading-snug">Export to Data Lake <i data-lucide="arrow-up-right" class="inline w-5 h-5 text-gray-400"></i></h3>
+                        <p class="text-gray-400 text-sm">Zero info loss guarantee</p>
+                    </div>
+                    <button class="w-32 bg-white text-gray-900 py-3 rounded-full font-medium text-sm hover:bg-gray-100 transition z-10" onclick="alert('Exporting...')">
+                        Configure <i data-lucide="play" class="inline w-3 h-3 ml-1"></i>
+                    </button>
+                    <!-- Decorative background element -->
+                    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-2xl"></div>
+                </div>
+            </div>
+
+            <!-- Chart Area / Log Table hybrid for prototype -->
+            <div class="bg-[#F8F9FA] dark:bg-gray-800 rounded-[2rem] p-6 border dark:border-gray-700 flex-1 min-h-[250px] transition-colors">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex gap-6 items-center">
+                        <h3 class="text-xl font-medium flex items-center gap-2 dark:text-white"><i data-lucide="bar-chart-2"></i> Recent Events</h3>
+                        <div class="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-[#161819] dark:bg-white"></div> Normal</span>
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-brand-yellow"></div> Anomaly</span>
+                        </div>
+                    </div>
+                    <button class="bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 dark:text-gray-300 transition" onclick="fetchLogs()">
+                        Refresh <i data-lucide="refresh-cw" class="inline w-3 h-3 ml-1"></i>
+                    </button>
+                </div>
+                
+                <!-- Table representing the data -->
+                <div class="overflow-y-auto max-h-[200px]">
+                    <table class="w-full text-left text-sm">
+                        <thead class="text-gray-400 sticky top-0 bg-[#F8F9FA] dark:bg-gray-800">
+                            <tr>
+                                <th class="pb-3 font-medium">Time</th>
+                                <th class="pb-3 font-medium">Event Type</th>
+                                <th class="pb-3 font-medium">Source IP</th>
+                                <th class="pb-3 font-medium">Raw Original</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody" class="text-gray-700 dark:text-gray-300">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Side Panel -->
+        <aside class="w-[280px] bg-[#F8F9FA] dark:bg-gray-800 rounded-[2rem] p-5 shrink-0 flex flex-col gap-4 border dark:border-gray-700 h-full overflow-y-auto transition-colors">
+            <!-- 2 Top squares -->
+            <div class="flex gap-4">
+                <button class="flex-1 bg-white dark:bg-gray-900 rounded-[1.5rem] p-5 flex flex-col items-center justify-center gap-2 shadow-sm border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition" onclick="alert('Docs')">
+                    <i data-lucide="message-square" class="w-6 h-6 text-gray-700 dark:text-gray-300"></i>
+                    <span class="text-sm font-medium dark:text-gray-200">Docs</span>
+                </button>
+                <button class="flex-1 bg-white dark:bg-gray-900 rounded-[1.5rem] p-5 flex flex-col items-center justify-center gap-2 shadow-sm border dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition" onclick="alert('API')">
+                    <i data-lucide="code" class="w-6 h-6 text-gray-700 dark:text-gray-300"></i>
+                    <span class="text-sm font-medium dark:text-gray-200">API</span>
+                </button>
+            </div>
+
+            <!-- List items -->
+            <div class="flex flex-col gap-3 mt-2">
+                <button class="bg-white dark:bg-gray-900 p-5 rounded-[1.5rem] shadow-sm border dark:border-gray-700 text-left group hover:bg-gray-50 dark:hover:bg-gray-800 transition" onclick="alert('Help Center')">
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><i data-lucide="help-circle" class="w-4 h-4 dark:text-gray-300"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition"></i>
+                    </div>
+                    <h4 class="font-medium text-[15px] mt-2 dark:text-white">Help Center</h4>
+                    <p class="text-[13px] text-gray-500 dark:text-gray-400 mt-0.5">Explore detailed documentation...</p>
+                </button>
+
+                <button class="bg-white dark:bg-gray-900 p-5 rounded-[1.5rem] shadow-sm border dark:border-gray-700 text-left group hover:bg-gray-50 dark:hover:bg-gray-800 transition" onclick="alert('Partners')">
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 dark:text-gray-300"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition"></i>
+                    </div>
+                    <h4 class="font-medium text-[15px] mt-2 dark:text-white">Integrations</h4>
+                    <p class="text-[13px] text-gray-500 dark:text-gray-400 mt-0.5">Connect to SIEM systems...</p>
+                </button>
+
+                <button class="bg-white dark:bg-gray-900 p-5 rounded-[1.5rem] shadow-sm border dark:border-gray-700 text-left group hover:bg-gray-50 dark:hover:bg-gray-800 transition" onclick="alert('Blog')">
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><i data-lucide="layout" class="w-4 h-4 dark:text-gray-300"></i></div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition"></i>
+                    </div>
+                    <h4 class="font-medium text-[15px] mt-2 dark:text-white">Schema Explorer</h4>
+                    <p class="text-[13px] text-gray-500 dark:text-gray-400 mt-0.5">View OCSF standard mappings...</p>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Dark mode toggle
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+        });
+
+        // Simulation Logic
+        let simInterval = null;
+        let isSimulating = false;
+        
+        async function startSimulation() {
+            const btn = document.getElementById('simBtn');
+            
+            if(isSimulating) {
+                clearInterval(simInterval);
+                btn.innerHTML = '<i data-lucide="play" class="w-4 h-4"></i> Start Live Ingestion';
+                btn.classList.replace('bg-red-500', 'bg-[#161819]');
+                isSimulating = false;
+                lucide.createIcons();
+                return;
+            }
+            
+            isSimulating = true;
+            btn.innerHTML = '<i data-lucide="square" class="w-4 h-4"></i> Stop Live Ingestion';
+            btn.classList.replace('bg-[#161819]', 'bg-red-500');
+            lucide.createIcons();
+            
+            const dummyLogs = [
+                '%ASA-4-106023: Deny tcp src outside:192.168.1.10/12345 dst inside:10.0.0.5/80 by access-group "acl_out"',
+                '%ASA-2-106001: Inbound TCP connection denied from 11.22.33.44/5555 to 10.0.0.5/22 flags SYN on interface outside',
+                'CEF:0|Security|ThreatManager|1.0|100|Port Scan Detected|8|src=10.0.0.99 dst=10.0.0.5 spt=5555 dpt=22 act=blocked proto=tcp',
+                'CEF:0|Security|Firewall|1.0|100|Connection Allowed|2|src=192.168.1.5 dst=8.8.8.8 spt=12345 dpt=53 act=allowed proto=udp'
+            ];
+
+            simInterval = setInterval(async () => {
+                const randomLog = dummyLogs[Math.floor(Math.random() * dummyLogs.length)];
+                try {
+                    await fetch('/ingest', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ raw_log: randomLog, source: 'simulator' })
+                    });
+                    fetchLogs(); // refresh the UI immediately
+                } catch(e) { console.error(e); }
+            }, 1000);
+        }
+
+        async function fetchLogs() {
+            try {
+                const response = await fetch('/api/logs');
+                const data = await response.json();
+                
+                document.getElementById('totalLogs').innerText = data.logs.length;
+                document.getElementById('anomalyCount').innerText = Math.floor(data.logs.length * 0.1); 
+
+                const tbody = document.getElementById('logTableBody');
+                tbody.innerHTML = '';
+                
+                let actualAnomalies = 0;
+
+                data.logs.reverse().forEach(log => {
+                    const parsedData = JSON.parse(log.data);
+                    const isAnomaly = log.is_anomaly; // Use actual ML prediction from backend
+                    if(isAnomaly) actualAnomalies++;
+
+                    const badgeColor = isAnomaly ? 'bg-brand-yellow text-black' : 'bg-white border text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-t border-gray-200/60 dark:border-gray-700/60 transition hover:bg-gray-50 dark:hover:bg-gray-800';
+                    tr.innerHTML = `
+                        <td class="py-3 pr-4 text-[13px] text-gray-500 dark:text-gray-400 pl-2">${log.event_time.split('.')[0]}</td>
+                        <td class="py-3 pr-4"><span class="px-2.5 py-1 ${badgeColor} rounded-lg text-xs font-medium shadow-sm">${log.event_type}</span></td>
+                        <td class="py-3 pr-4 text-[13px] font-medium dark:text-gray-200">${parsedData.src_ip || 'N/A'}</td>
+                        <td class="py-3 text-[12px] text-gray-400 font-mono truncate max-w-[200px]" title='${parsedData.raw_event}'>${parsedData.raw_event}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('anomalyCount').innerText = actualAnomalies;
+            } catch (error) {
+                console.error("Failed to fetch logs:", error);
+            }
+        }
+
+        fetchLogs();
+    </script>
+</body>
+</html>

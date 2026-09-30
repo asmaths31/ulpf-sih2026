@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Core API and ingestion layer
+  ulpf-api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@ulpf-db:5432/ulpf
+      - REDIS_URL=redis://ulpf-redis:6379/0
+    depends_on:
+      - ulpf-db
+      - ulpf-redis
+    volumes:
+      - ./data/raw_store:/app/data/raw_store
+
+  # Relational Database for Normalized Events and Graph tables
+  ulpf-db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ulpf
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Queue / Stream for decoupled ingestion
+  ulpf-redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
